@@ -1,0 +1,47 @@
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Intersect(Target, Range("B2:B65536")) Is Nothing Or Target.Cells.Count > 1 Then Exit Sub
+    Application.EnableEvents = True
+    Dim rN As String
+    row = Target.row
+    rN = getBiggestRowNumber()
+    rN = runningNumber(rN)
+    processUniqueString rN, row
+End Sub
+
+Public Function runningNumber(currentNumber) As Integer
+    MsgBox currentNumber
+    runningNumber = currentNumber + 1
+End Function
+
+Sub processUniqueString(rN, row)
+    Dim currentSheet As String
+    Dim sheet As String
+    Dim sheetShortCode As String
+    Dim uniqueString As String
+    
+    sheet = "sheet1"
+    sheetShortCode = "code1"
+    currentSheet = ActiveSheet.Name
+    
+    If (LCase(currentSheet) = sheet) Then
+        uniqueString = sheetShortCode
+    End If
+    
+    Range("A" & row).Value = UCase(uniqueString) & Format(rN, "0000")
+End Sub
+
+Public Function getBiggestRowNumber() As Long
+    Dim N As Long, i As Long, j As Long, max As Long, current As String, converted As Long
+    N = Cells(Rows.Count, "A").End(xlUp).row
+    max = 0
+    For i = 2 To N
+        If Cells(i, "A").Count >= 1 Then
+            current = Cells(i, "A").Value
+            converted = Val(Right(current, 4))
+            If max < converted Then
+                max = converted
+            End If
+        End If
+        getBiggestRowNumber = max
+    Next i
+End Function
